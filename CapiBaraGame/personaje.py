@@ -1,8 +1,10 @@
 import pygame
 import  constantes
+#from main import posicion_pantalla
+
 
 class Personaje():
-    def __init__(self,x,y,animaciones,energia):
+    def __init__(self,x,y,animaciones,energia,tipo):
         self.score = 0
         self.energia = energia
         self.vivo = True
@@ -15,9 +17,13 @@ class Personaje():
         self.image = animaciones[self.frame_index]
         self.forma = self.image.get_rect()
         self.forma.center = (x,y)
+        self.tipo = tipo
+
+
 
 
     def movimiento(self,delta_x,delta_y):
+        posicion_pantalla = [0,0]
         if delta_x < 0:
             self.flip = True
         if delta_x >0:
@@ -25,6 +31,19 @@ class Personaje():
 
         self.forma.x = self.forma.x + delta_x
         self.forma.y = self.forma.y + delta_y
+
+        #logica solo aplica al jugador y no enemigos
+        if self.tipo == 1:
+        #Actualizar la pantalla basado la posicion del jugador
+        #mover la camara izquierda o derecha
+            if self.forma.right > (constantes.ANCHO_VENTANA - constantes.LIMITE_PANTALLA):
+                posicion_pantalla[0] = (constantes.ALTO_VENTANA - constantes.LIMITE_PANTALLA) -self.forma.right
+                self.forma.right = constantes.ANCHO_VENTANA -constantes.LIMITE_PANTALLA
+            if self.forma.left <  constantes.LIMITE_PANTALLA:
+                posicion_pantalla[0] =  constantes.LIMITE_PANTALLA -self.forma.left
+                self.forma.left = constantes.LIMITE_PANTALLA
+            return  posicion_pantalla
+
 
     def update(self):
         #Comprobar si el personaje ha muerto

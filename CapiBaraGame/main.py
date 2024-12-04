@@ -4,7 +4,9 @@ from personaje import Personaje
 from textos import DamageText
 from weapon import Weapon
 from items import Item
+from mundo import Mundo
 import os
+import csv
 
 
 #funciones:
@@ -34,7 +36,10 @@ pygame.init()
 
 ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
 
-pygame.display.set_caption("Capibaras al rescate")
+pygame.display.set_caption("Nombre del juego")
+
+#variables
+posicion_pantalla = [0,0]
 
 
 #fuentes
@@ -81,6 +86,13 @@ imagen_pistola = escalar_img(imagen_pistola,constantes.SCALA_PISTOLA)
 imagen_balas = pygame.image.load(f"Assets//Images//Weapons//bullet.png")
 imagen_balas = escalar_img(imagen_balas,constantes.SCALA_BALA)
 
+#cargar imagenes del mundo
+tile_list = []
+for x in range(constantes.TILE_TYPES):
+    tile_image = pygame.image.load(f"Assets//Images//tiles//tile_{x+1}.png")
+    tile_image = pygame.transform.scale(tile_image,(constantes.TILE_SIZE,constantes.TILE_SIZE))
+    tile_list.append(tile_image)
+
 #cargar imagenes de los items
 potatoe = pygame.image.load("Assets//Images//items//potatoe.png")
 potatoe = escalar_img(potatoe,0.05)
@@ -109,14 +121,38 @@ def vida_jugador():
         else:
             ventana.blit(tree_vacio,(5+i*30,5))
 
+world_data = []
+
+fila = [5]* constantes.COLUMNAS
+for fila in range(constantes.FILAS):
+    filas = [5] * constantes.COLUMNAS
+    world_data.append(filas)
+
+#cargar el archivo con el nivel
+with open("Assets//nivel//mapa.csv",newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=';')
+    for x,fila in enumerate(reader):
+        for y, columna in enumerate(fila):
+            world_data[x][y] = int(columna)
+
+
+world = Mundo()
+world.process_data(world_data,tile_list)
+
+
+
+def dibujar_grid():
+    for x in range(30):
+        pygame.draw.line(ventana,constantes.BLANCO,(x*constantes.TILE_SIZE,0),(x*constantes.TILE_SIZE,constantes.ALTO_VENTANA))
+        pygame.draw.line(ventana, constantes.BLANCO, (0, x*constantes.TILE_SIZE), (constantes.ANCHO_VENTANA, x*constantes.TILE_SIZE))
 
 
 #crar un jufador de la clase personaje
-jugador = Personaje(50,50,animaciones,70)
+jugador = Personaje(50,50,animaciones,70,1)
 
 #crear un enemigo de la clase personaje
-cazador = Personaje(400,300,animaciones_enemigos[0],100)#si se quieres otro enemigo seria animaciones_enemigos[0]
-cazador1 = Personaje(100,200,animaciones_enemigos[0],100)
+cazador = Personaje(400,300,animaciones_enemigos[0],100,2)#si se quieres otro enemigo seria animaciones_enemigos[0]
+cazador1 = Personaje(100,200,animaciones_enemigos[0],100,2)
 
 #crear lista de enemigos
 lista_enemigos = []
@@ -157,6 +193,9 @@ while run == True:
 
 
     ventana.fill(constantes.COLOR_BG)
+    #Dibujar mundo
+    world.draw(ventana)
+    #dibujar_grid()
 
     #Calcular el movimiento del jugador
     delta_x = 0
@@ -172,7 +211,10 @@ while run == True:
         delta_y = constantes.VELOCIDAD
 
     #mover al jugador
-    jugador.movimiento(delta_x,delta_y)
+    posicion_pantalla = jugador.movimiento(delta_x,delta_y)
+
+    #Actualizar mapa
+    world.update(posicion_pantalla)
 
     #Actualizar estado del jugador
     jugador.update()
@@ -201,6 +243,9 @@ while run == True:
 
     #dibujar al jugador
     jugador.dibujar(ventana)
+
+    #dibujar mundo
+    #world.draw(ventana)
 
     #dibujar al enemigo
     for ene in lista_enemigos:
