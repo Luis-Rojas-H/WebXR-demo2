@@ -32,8 +32,6 @@ def nombres_carpetas(directorio):
 
 pygame.init()
 
-
-
 ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
 
 pygame.display.set_caption("Nombre del juego")
@@ -123,32 +121,28 @@ def vida_jugador():
 
 world_data = []
 
-fila = [5]* constantes.COLUMNAS
+fila = [51]* constantes.COLUMNAS
 for fila in range(constantes.FILAS):
-    filas = [5] * constantes.COLUMNAS
+    filas = [51] * constantes.COLUMNAS
     world_data.append(filas)
 
 #cargar el archivo con el nivel
-with open("Assets//nivel//mapa.csv",newline='') as csvfile:
-    reader = csv.reader(csvfile, delimiter=';')
+with open("Assets//nivel//mapa_peru.csv",newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',')
     for x,fila in enumerate(reader):
         for y, columna in enumerate(fila):
             world_data[x][y] = int(columna)
 
-
 world = Mundo()
 world.process_data(world_data,tile_list)
-
-
 
 def dibujar_grid():
     for x in range(30):
         pygame.draw.line(ventana,constantes.BLANCO,(x*constantes.TILE_SIZE,0),(x*constantes.TILE_SIZE,constantes.ALTO_VENTANA))
         pygame.draw.line(ventana, constantes.BLANCO, (0, x*constantes.TILE_SIZE), (constantes.ANCHO_VENTANA, x*constantes.TILE_SIZE))
 
-
 #crar un jufador de la clase personaje
-jugador = Personaje(50,50,animaciones,70,1)
+jugador = Personaje(100,80,animaciones,70,1)
 
 #crear un enemigo de la clase personaje
 cazador = Personaje(400,300,animaciones_enemigos[0],100,2)#si se quieres otro enemigo seria animaciones_enemigos[0]
@@ -211,7 +205,7 @@ while run == True:
         delta_y = constantes.VELOCIDAD
 
     #mover al jugador
-    posicion_pantalla = jugador.movimiento(delta_x,delta_y)
+    posicion_pantalla = jugador.movimiento(delta_x,delta_y, world.obstaculos_tiles)
 
     #Actualizar mapa
     world.update(posicion_pantalla)
@@ -236,10 +230,10 @@ while run == True:
 
 
     #actualizar daño
-    grupo_damage_text.update()
+    grupo_damage_text.update(posicion_pantalla)
 
     #actualizar item
-    grupo_items.update(jugador)
+    grupo_items.update(posicion_pantalla, jugador)
 
     #dibujar al jugador
     jugador.dibujar(ventana)
@@ -249,6 +243,7 @@ while run == True:
 
     #dibujar al enemigo
     for ene in lista_enemigos:
+        ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla)
         ene.dibujar(ventana)
 
     #dibujar el arma

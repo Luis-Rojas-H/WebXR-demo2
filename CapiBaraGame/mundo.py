@@ -2,8 +2,8 @@ import constantes
 from items import Item
 from personaje import Personaje
 
-obstaculos = [0,2,7,39,55,46,54]
-
+#obstaculos = [0,2,7,39,46,54,55]
+obstaculos = [110,130,153]
 class Mundo():
     def __init__(self):
         self.map_tiles = []
@@ -21,6 +21,9 @@ class Mundo():
                 image_rect.center = (image_x,image_y)
                 title_data = [image,image_rect,image_x,image_y]
                 self.map_tiles.append((title_data))
+                #agregar tiles a obstaculos
+                if tile in obstaculos:
+                    self.obstaculos_tiles.append(title_data)
 
     def update(self,posicion_pantalla):
         for tile in self.map_tiles:
