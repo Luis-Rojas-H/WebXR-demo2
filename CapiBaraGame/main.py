@@ -42,6 +42,9 @@ posicion_pantalla = [0,0]
 
 #fuentes
 font = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",10)
+font_game_over = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",24)
+
+game_over_text = font_game_over.render('Juego Terminado', True, constantes.BLANCO)
 
 #Importar imagenes
 #Energia
@@ -184,67 +187,65 @@ while run == True:
 
     #QUE VAYA A 60 FPS
     reloj.tick(constantes.FPS)
-
-
     ventana.fill(constantes.COLOR_BG)
-    #Dibujar mundo
-    world.draw(ventana)
     #dibujar_grid()
 
-    #Calcular el movimiento del jugador
-    delta_x = 0
-    delta_y = 0
+    if jugador.vivo == True:
+        #Calcular el movimiento del jugador
+        delta_x = 0
+        delta_y = 0
 
-    if mover_derecha == True:
-        delta_x = constantes.VELOCIDAD
-    if mover_izquierda == True:
-        delta_x = -constantes.VELOCIDAD
-    if mover_arriba == True:
-        delta_y = -constantes.VELOCIDAD
-    if mover_abajo == True:
-        delta_y = constantes.VELOCIDAD
+        if mover_derecha == True:
+            delta_x = constantes.VELOCIDAD
+        if mover_izquierda == True:
+            delta_x = -constantes.VELOCIDAD
+        if mover_arriba == True:
+            delta_y = -constantes.VELOCIDAD
+        if mover_abajo == True:
+            delta_y = constantes.VELOCIDAD
 
-    #mover al jugador
-    posicion_pantalla = jugador.movimiento(delta_x,delta_y, world.obstaculos_tiles)
+        #mover al jugador
+        posicion_pantalla = jugador.movimiento(delta_x,delta_y, world.obstaculos_tiles)
 
-    #Actualizar mapa
-    world.update(posicion_pantalla)
+        #Actualizar mapa
+        world.update(posicion_pantalla)
 
-    #Actualizar estado del jugador
-    jugador.update()
-    # Actualizar estado del enemigo
-    for ene in lista_enemigos:
-        ene.update()
-        print(ene.energia)
+        #Actualizar estado del jugador
+        jugador.update()
+        # Actualizar estado del enemigo
+        for ene in lista_enemigos:
+            ene.update()
 
-
-    #Actualiza el estado del arma
-    bala = pistola.update(jugador)
-    if bala:
-        grupo_balas.add(bala)
-    for bala in grupo_balas:
-        damage,pos_damage = bala.update(lista_enemigos)
-        if damage:
-            damage_text = DamageText(pos_damage.centerx,pos_damage.centery, str(damage),font,constantes.ROJO)
-            grupo_damage_text.add(damage_text)
+        #Actualiza el estado del arma
+        bala = pistola.update(jugador)
+        if bala:
+            grupo_balas.add(bala)
+        for bala in grupo_balas:
+            damage,pos_damage = bala.update(lista_enemigos, world.obstaculos_tiles)
+            if damage:
+                damage_text = DamageText(pos_damage.centerx,pos_damage.centery, str(damage),font,constantes.ROJO)
+                grupo_damage_text.add(damage_text)
 
 
-    #actualizar daño
-    grupo_damage_text.update(posicion_pantalla)
+        #actualizar daño
+        grupo_damage_text.update(posicion_pantalla)
 
-    #actualizar item
-    grupo_items.update(posicion_pantalla, jugador)
+        #actualizar item
+        grupo_items.update(posicion_pantalla, jugador)
+
+    # dibujar mundo
+    world.draw(ventana)
 
     #dibujar al jugador
     jugador.dibujar(ventana)
 
-    #dibujar mundo
-    #world.draw(ventana)
-
     #dibujar al enemigo
     for ene in lista_enemigos:
-        ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla)
-        ene.dibujar(ventana)
+        if ene.energia == 0:
+            lista_enemigos.remove(ene)
+        if ene.energia > 0:
+            ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla)
+            ene.dibujar(ventana)
 
     #dibujar el arma
     pistola.dibujar(ventana)
@@ -262,6 +263,12 @@ while run == True:
 
     #dibujar items
     grupo_items.draw(ventana)
+
+    if jugador.vivo == False:
+        ventana.fill(constantes.ROJO_OSCURO)
+        text_rect = game_over_text.get_rect(center=(constantes.ANCHO_VENTANA / 2,
+                                                    constantes.ALTO_VENTANA / 2))
+        ventana.blit(game_over_text, text_rect)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

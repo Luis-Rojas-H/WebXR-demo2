@@ -1,4 +1,6 @@
 import pygame
+from pygame.draw_py import clip_line
+
 import  constantes
 import math
 #from main import posicion_pantalla
@@ -19,6 +21,8 @@ class Personaje():
         self.forma = self.image.get_rect()
         self.forma.center = (x,y)
         self.tipo = tipo
+        self.golpe = False
+        self.ultimo_golpe = pygame.time.get_ticks()
 
     def movimiento(self,delta_x,delta_y, obstaculos_tiles):
         posicion_pantalla = [0,0]
@@ -64,15 +68,24 @@ class Personaje():
             return posicion_pantalla
 
     def enemigos(self, jugador, obstaculos_title, posicion_pantalla):
+        clipped_line = ()
         ene_dx = 0
         ene_dy = 0
         self.forma.x += posicion_pantalla[0]
         self.forma.y += posicion_pantalla[1]
 
+        linea_de_vision = ((self.forma.centerx, self.forma.centery),
+                           (jugador.forma.centerx, jugador.forma.centery))
+
+        for obs in obstaculos_title:
+            if obs[1].clipline(linea_de_vision):
+                clipped_line = obs[1].clipline(linea_de_vision)
+
+
         distancia = math.sqrt((self.forma.centerx - jugador.forma.centerx)**2 +
                               (self.forma.centery - jugador.forma.centery)**2)
 
-        if distancia < constantes.RANGO:
+        if not clipped_line and distancia < constantes.RANGO:
             if self.forma.centerx > jugador.forma.centerx:
                 ene_dx = -constantes.VELOCIDAD_ENEMIGO
             if self.forma.centerx < jugador.forma.centerx:
@@ -84,11 +97,24 @@ class Personaje():
 
         self.movimiento(ene_dx, ene_dy, obstaculos_title)
 
+        #atacar al jugador
+        if distancia < constantes.RANGO_ATAQUE and jugador.golpe == False:
+            jugador.energia -= 25
+            jugador.golpe = True
+            jugador.ultimo_golpe = pygame.time.get_ticks()
+
     def update(self):
         #Comprobar si el personaje ha muerto
         if self.energia <= 0:
             self.energia = 0
             self.vivo = False
+
+        #time para poder volver a recibir daño
+        golpe_cooldown = 1000
+        if self.tipo == 1:
+            if self.golpe == True:
+                if pygame.time.get_ticks() - self.ultimo_golpe > golpe_cooldown:
+                    self.golpe = False
 
 
         cooldown_animacion = 120
