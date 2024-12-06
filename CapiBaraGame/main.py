@@ -8,7 +8,7 @@ from mundo import Mundo
 import os
 import csv
 
-
+#
 #funciones:
 #escalar imagen
 
