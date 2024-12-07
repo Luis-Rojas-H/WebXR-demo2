@@ -303,8 +303,9 @@ mover_derecha = False
 #controlar el frame rate
 reloj = pygame.time.Clock()
 
-#pygame.mixer.music.load("Assets/sounds/cancion.wav")
-#pygame.mixer.music.play(-1)
+pygame.mixer.music.load("Assets/sounds/cancion.mp3")
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play(-1)
 
 sonido_death_enemigo = pygame.mixer.Sound("Assets/sounds/death_enemigo.wav")
 sonido_disparo = pygame.mixer.Sound("Assets/sounds/shoter.wav")
