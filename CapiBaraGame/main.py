@@ -436,7 +436,7 @@ while run == True:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if boton_reinicio.collidepoint(event.pos):
                         reiniciar_juego()
-        elif jugador.score == 1 :
+        elif jugador.score == constantes.RANGO_COINS :
             # Definir las líneas de texto de los créditos y mensaje final
             texto_creditos = [
                 "Rescate de Capibaras"
