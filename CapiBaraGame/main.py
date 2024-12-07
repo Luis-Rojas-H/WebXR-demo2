@@ -13,7 +13,6 @@ import math
 #funciones:
 #escalar imagen
 
-
 def escalar_img(image, scale):
     w = image.get_width()
     h = image.get_height()
@@ -93,6 +92,7 @@ def reiniciar_juego():
 
 
 pygame.init()
+pygame.mixer.init()
 
 ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
 
@@ -114,7 +114,29 @@ font_reinicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
 font_inicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
 font_titulo = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
 
-game_over_text = font_game_over.render('Juego Terminado', True, constantes.BLANCO)
+game_win_text = font_game_over.render(
+    """Rescate de Capibaras
+Un juego creado por...
+Desarrollador Principal: Tu Nombre
+Artista: Nombre del Artista
+Músico: Nombre del Compositor
+
+Este juego tiene como propósito
+concienciar sobre la importancia
+de proteger a los animales y su
+hábitat natural. La capibara es
+una especie que enfrenta amenazas
+debido a la deforestación y la caza
+ilegal. Cada pequeño esfuerzo cuenta
+para preservar a estos animales
+increíbles.
+
+Gracias a todos los que apoyaron el proyecto
+¡Esperamos que te haya gustado!
+Gracias por jugar y recuerda:
+¡Juntos podemos hacer la diferencia!""",
+    True, constantes.BLANCO
+)
 
 text_boton_reinicio = font_reinicio.render("Reinciar",True,constantes.NEGRO)
 
@@ -305,17 +327,19 @@ mover_abajo = False
 mover_izquierda = False
 mover_derecha = False
 
-
 #controlar el frame rate
 reloj = pygame.time.Clock()
 
+#pygame.mixer.music.load("Assets/sounds/cancion.wav")
+#pygame.mixer.music.play(-1)
+
+sonido_death_enemigo = pygame.mixer.Sound("Assets/sounds/death_enemigo.wav")
+sonido_disparo = pygame.mixer.Sound("Assets/sounds/shoter.wav")
 
 mostrar_inicio = True
-
 run = True
 
 while run == True:
-
 
     if mostrar_inicio:
         pantalla_inicio()
@@ -367,6 +391,8 @@ while run == True:
             bala = pistola.update(jugador)
             if bala:
                 grupo_balas.add(bala)
+                sonido_disparo.set_volume(0.1)
+                sonido_disparo.play()
             for bala in grupo_balas:
                 damage,pos_damage = bala.update(lista_enemigos, world.obstaculos_tiles)
                 if damage:
@@ -390,6 +416,7 @@ while run == True:
         #dibujar al enemigo
         for ene in lista_enemigos:
             if ene.energia == 0:
+                sonido_death_enemigo.play()
                 lista_enemigos.remove(ene)
             if ene.energia > 0:
                 ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla, ventana, font)
@@ -435,6 +462,52 @@ while run == True:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if boton_reinicio.collidepoint(event.pos):
                         reiniciar_juego()
+        elif jugador.score == 1 :
+            # Definir las líneas de texto de los créditos y mensaje final
+            texto_creditos = [
+                "Rescate de Capibaras"
+                "",
+                "Este juego tiene como propósito",
+                "concienciar sobre la importancia",
+                "de proteger a los animales y su",
+                "hábitat natural. La capibara es",
+                "una especie que enfrenta amenazas",
+                "debido a la deforestación y la caza",
+                "ilegal. Cada pequeño esfuerzo cuenta",
+                "para preservar a estos animales",
+                "increíbles.",
+                "",
+                "¡Esperamos que te haya gustado!",
+                "Gracias por jugar y recuerda:",
+                "¡Juntos podemos hacer la diferencia!"
+            ]
+
+            font_creditos = pygame.font.Font("Assets//fonts//QuinqueFive.ttf", 12)
+            ventana.fill(constantes.NEGRO)
+
+            # Dibujar cada línea de texto de manera ordenada
+            y_offset = 0  # Empieza un poco arriba de la mitad
+            indentacion = 20  # Espacio para la indentación (se mueve el texto hacia la derecha)
+
+            # Iterar sobre las líneas de texto y dibujarlas
+            for linea in texto_creditos:
+                texto = font_creditos.render(linea, True, constantes.BLANCO)
+                x_offset = constantes.ANCHO_VENTANA / 2 - texto.get_width() / 2 + indentacion  # Indentación hacia la derecha
+                ventana.blit(texto, (x_offset, y_offset))
+                y_offset += 40  # Espacio entre líneas de texto
+
+            # Botón de reinicio con un diseño más atractivo
+            boton_reinicio = pygame.Rect(constantes.ANCHO_VENTANA / 2 - 100, constantes.ALTO_VENTANA / 2 + 250, 200, 50)
+            pygame.draw.rect(ventana, constantes.AMARILLO, boton_reinicio, border_radius=15)  # Bordes redondeados
+            ventana.blit(text_boton_reinicio, (boton_reinicio.x + 50, boton_reinicio.y + 20))
+            # Detección del clic en el botón de reinicio (dentro del bucle de eventos)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if boton_reinicio.collidepoint(event.pos):
+                        reiniciar_juego()
+
 
 
 
