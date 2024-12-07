@@ -81,7 +81,7 @@ def reiniciar_juego():
     grupo_items.add(moneda,moneda_1,moneda_2,moneda_3, papa,papa_1,papa_2,papa_3)
 
     world_data = []
-    with open("Assets//nivel//mapa_peru.csv", newline="") as csvfile:
+    with open("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/nivel/mapa_peru.csv", newline="") as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for fila in reader:
             filas = [int(columna) for columna in fila]
@@ -96,20 +96,21 @@ pygame.mixer.init()
 
 ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
 
-pygame.display.set_caption("Nombre del juego")
+pygame.display.set_caption("Rescate de Capibaras")
 
 #variables
 posicion_pantalla = [0,0]
 
 #fuentes
-font = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",10)
-font_game_over = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",24)
+font = pygame.font.Font("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/fonts/QuinqueFive.ttf",10)
+
+font_game_over = pygame.font.Font("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/fonts/QuinqueFive.ttf",24)
 
 game_over_text = font_game_over.render('Juego Terminado', True, constantes.BLANCO)
 
-font_reinicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
-font_inicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
-font_titulo = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
+font_reinicio = pygame.font.Font("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/fonts/QuinqueFive.ttf",12)
+font_inicio = pygame.font.Font("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/fonts/QuinqueFive.ttf",12)
+font_titulo = pygame.font.Font("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/fonts/QuinqueFive.ttf",12)
 
 text_boton_reinicio = font_reinicio.render("Reinciar",True,constantes.NEGRO)
 
@@ -134,62 +135,62 @@ def pantalla_inicio():
 
 #Importar imagenes
 #Energia
-tree_vacio = pygame.image.load("Assets//Images//items//heart_empty.png").convert_alpha()
+tree_vacio = pygame.image.load("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/items/heart_empty.png").convert_alpha()
 tree_vacio = escalar_img(tree_vacio,constantes.SCALA_TREE)
-tree_mitad = pygame.image.load("Assets//Images//items//heart_half.png").convert_alpha()
+tree_mitad = pygame.image.load("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/items/heart_half.png").convert_alpha()
 tree_mitad = escalar_img(tree_mitad,constantes.SCALA_TREE)
-tree_lleno = pygame.image.load("Assets//Images//items//heart_full.png").convert_alpha()
+tree_lleno = pygame.image.load("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/items/heart_full.png").convert_alpha()
 tree_lleno = escalar_img(tree_lleno,constantes.SCALA_TREE)
 
 
 #Personaje
 animaciones = []
 for i in range (6):
-    img = pygame.image.load(f"Assets//Images//Characters//Player//player-run{i+1}.png")
+    img = pygame.image.load(f"C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/Characters/Player/player-run{i+1}.png")
     img = escalar_img(img,constantes.SCALA_PERSONAJE)
     animaciones.append(img)
 
 
 #enemigos
-directorio_enemigos = "Assets//Images//Characters//enemies"
+directorio_enemigos = "C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/Characters/enemies"
 tipo_enemigos = nombres_carpetas(directorio_enemigos)
 animaciones_enemigos = []
 for eni in tipo_enemigos:
     lista_temp = []
-    ruta_temp = f"Assets//Images//Characters//enemies//{eni}"
+    ruta_temp = f"C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/Characters/enemies/{eni}"
     num_animaciones = contar_elementos(ruta_temp)
     for i in range(num_animaciones):
-        img_enemigo = pygame.image.load(f"{ruta_temp}//{eni}_{i+1}.png").convert_alpha()
+        img_enemigo = pygame.image.load(f"{ruta_temp}/{eni}_{i+1}.png").convert_alpha()
         img_enemigo = escalar_img(img_enemigo, constantes.SCALA_ENEMIGOS)
         lista_temp.append(img_enemigo)
     animaciones_enemigos.append(lista_temp)
 
 
 #Arma
-imagen_pistola = pygame.image.load(f"Assets//Images//Weapons//tabanca.png")
+imagen_pistola = pygame.image.load(f"C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/Weapons/tabanca.png")
 imagen_pistola = escalar_img(imagen_pistola,constantes.SCALA_PISTOLA)
 
 #Balas
-imagen_balas = pygame.image.load(f"Assets//Images//Weapons//bullet.png")
+imagen_balas = pygame.image.load(f"C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/Weapons/bullet.png")
 imagen_balas = escalar_img(imagen_balas,constantes.SCALA_BALA)
 
 #cargar imagenes del mundo
 tile_list = []
 for x in range(constantes.TILE_TYPES):
-    tile_image = pygame.image.load(f"Assets//Images//tiles//tile_{x+1}.png")
+    tile_image = pygame.image.load(f"C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/tiles/tile_{x+1}.png")
     tile_image = pygame.transform.scale(tile_image,(constantes.TILE_SIZE,constantes.TILE_SIZE))
     tile_list.append(tile_image)
 
 #cargar imagenes de los items
-potatoe = pygame.image.load("Assets//Images//items//potatoe.png")
+potatoe = pygame.image.load("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/items/potatoe.png")
 potatoe = escalar_img(potatoe,0.05)
 
 coin_images = []
-ruta_img = "Assets/Images/items/coin"
+ruta_img = "C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/items/coin"
 num_coin_images = contar_elementos(ruta_img)
 print(f"numero de imagenes de monedas: {num_coin_images}")
 for i in range(num_coin_images):
-    img = pygame.image.load(f"Assets//Images//items//coin//coin_{i}.png")
+    img = pygame.image.load(f"C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/Images/items/coin/coin_{i}.png")
     img = escalar_img(img,2)
 
     coin_images.append(img)
@@ -217,7 +218,7 @@ for fila in range(constantes.FILAS):
     world_data.append(filas)
 
 #cargar el archivo con el nivel
-with open("Assets//nivel//mapa_peru.csv",newline='') as csvfile:
+with open("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/nivel/mapa_peru.csv",newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     for x,fila in enumerate(reader):
         for y, columna in enumerate(fila):
@@ -303,12 +304,12 @@ mover_derecha = False
 #controlar el frame rate
 reloj = pygame.time.Clock()
 
-pygame.mixer.music.load("Assets/sounds/cancion.mp3")
+pygame.mixer.music.load("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/sounds/cancion.mp3")
 pygame.mixer.music.set_volume(0.1)
 pygame.mixer.music.play(-1)
 
-sonido_death_enemigo = pygame.mixer.Sound("Assets/sounds/death_enemigo.wav")
-sonido_disparo = pygame.mixer.Sound("Assets/sounds/shoter.wav")
+sonido_death_enemigo = pygame.mixer.Sound("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/sounds/death_enemigo.wav")
+sonido_disparo = pygame.mixer.Sound("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/sounds/shoter.wav")
 
 mostrar_inicio = True
 run = True
@@ -456,7 +457,7 @@ while run == True:
                 "¡Juntos podemos hacer la diferencia!"
             ]
 
-            font_creditos = pygame.font.Font("Assets//fonts//QuinqueFive.ttf", 12)
+            font_creditos = pygame.font.Font("C:/Users/love_/OneDrive/Documents/GitHub/WebXR-demo2/CapiBaraGame/assets/fonts/QuinqueFive.ttf", 12)
             ventana.fill(constantes.NEGRO)
 
             # Dibujar cada línea de texto de manera ordenada
