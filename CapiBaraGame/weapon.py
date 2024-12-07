@@ -10,6 +10,9 @@ class Weapon():
         self.angulo = 0
         self.imagen = pygame.transform.rotate(self.imagen_original, self.angulo)
         self.forma = self.imagen.get_rect()
+
+        self.disparada = False
+
         self.dispara = False
         self.ultimo_disparo = pygame.time.get_ticks()
 

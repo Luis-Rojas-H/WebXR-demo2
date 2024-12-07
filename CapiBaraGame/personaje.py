@@ -24,21 +24,28 @@ class Personaje():
         self.golpe = False
         self.ultimo_golpe = pygame.time.get_ticks()
 
-    def movimiento(self,delta_x,delta_y, obstaculos_tiles):
-        posicion_pantalla = [0,0]
+
+    def movimiento(self, delta_x, delta_y, obstaculos_tiles):
+        posicion_pantalla = [0, 0]
         if delta_x < 0:
             self.flip = True
-        if delta_x >0:
+        if delta_x > 0:
             self.flip = False
 
-        self.forma.x = self.forma.x + delta_x
+        # Movimiento horizontal
+        self.forma.x += delta_x
+
         for obstacle in obstaculos_tiles:
             if obstacle[1].colliderect(self.forma):
                 if delta_x > 0:
                     self.forma.right = obstacle[1].left
                 if delta_x < 0:
                     self.forma.left = obstacle[1].right
-        self.forma.y = self.forma.y + delta_y
+
+
+        # Movimiento vertical
+        self.forma.y += delta_y
+
         for obstacle in obstaculos_tiles:
             if obstacle[1].colliderect(self.forma):
                 if delta_y > 0:
@@ -46,25 +53,28 @@ class Personaje():
                 if delta_y < 0:
                     self.forma.top = obstacle[1].bottom
 
-        #logica solo aplica al jugador y no enemigos
+        # Lógica de cámara (solo para el jugador)
         if self.tipo == 1:
-            #Actualizar la pantalla basado la posicion del jugador
-            #mover la camara izquierda ha derecha
+            # Movimiento horizontal de la cámara
             if self.forma.right > (constantes.ANCHO_VENTANA - constantes.LIMITE_PANTALLA):
-                posicion_pantalla[0] = (constantes.ALTO_VENTANA - constantes.LIMITE_PANTALLA) - self.forma.right
+                desplazamiento = (self.forma.right - (constantes.ANCHO_VENTANA - constantes.LIMITE_PANTALLA)) * 0.5
+                posicion_pantalla[0] -= desplazamiento
                 self.forma.right = constantes.ANCHO_VENTANA - constantes.LIMITE_PANTALLA
-            if self.forma.left <  constantes.LIMITE_PANTALLA:
-                posicion_pantalla[0] =  constantes.LIMITE_PANTALLA - self.forma.left
+            elif self.forma.left < constantes.LIMITE_PANTALLA:
+                desplazamiento = (constantes.LIMITE_PANTALLA - self.forma.left) * 0.5
+                posicion_pantalla[0] += desplazamiento
                 self.forma.left = constantes.LIMITE_PANTALLA
 
-            # Actualizar la pantalla basado la posicion del jugador
-            # mover la camara izquierda ha derecha
+            # Movimiento vertical de la cámara
             if self.forma.bottom > (constantes.ALTO_VENTANA - constantes.LIMITE_PANTALLA):
-                posicion_pantalla[1] = (constantes.ALTO_VENTANA - constantes.LIMITE_PANTALLA) - self.forma.bottom
+                desplazamiento = (self.forma.bottom - (constantes.ALTO_VENTANA - constantes.LIMITE_PANTALLA)) * 0.5
+                posicion_pantalla[1] -= desplazamiento
                 self.forma.bottom = constantes.ALTO_VENTANA - constantes.LIMITE_PANTALLA
-            if self.forma.top < constantes.LIMITE_PANTALLA:
-                posicion_pantalla[1] = constantes.LIMITE_PANTALLA - self.forma.top
+            elif self.forma.top < constantes.LIMITE_PANTALLA:
+                desplazamiento = (constantes.LIMITE_PANTALLA - self.forma.top) * 0.5
+                posicion_pantalla[1] += desplazamiento
                 self.forma.top = constantes.LIMITE_PANTALLA
+
             return posicion_pantalla
 
     def enemigos(self, jugador, obstaculos_title, posicion_pantalla):
@@ -128,4 +138,6 @@ class Personaje():
     def dibujar(self,interfaz):
         imagen_flip = pygame.transform.flip(self.image,self.flip,False)
         interfaz.blit(imagen_flip,self.forma)
-        pygame.draw.rect(interfaz,constantes.COLOR_PERSONAJE,self.forma,1)
+
+        #pygame.draw.rect(interfaz,constantes.COLOR_PERSONAJE,self.forma,1)
+

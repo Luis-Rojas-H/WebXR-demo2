@@ -8,7 +8,7 @@ from mundo import Mundo
 import os
 import csv
 
-#
+
 #funciones:
 #escalar imagen
 
@@ -30,6 +30,37 @@ def nombres_carpetas(directorio):
     return os.listdir(directorio)
 
 
+
+#funcion para reiniciar el juego
+def reiniciar_juego():
+    global lista_enemigos, grupo_items, jugador, world
+
+    jugador.vivo = True
+    jugador.energia = 100
+    jugador.score = 0
+    jugador.forma.topleft = (100, 80)
+
+    lista_enemigos.clear()
+    cazador = Personaje(400, 500, animaciones_enemigos[0], 100, 2)
+    cazador1 = Personaje(100, 200, animaciones_enemigos[0], 100, 2)
+    lista_enemigos.extend([cazador, cazador1])
+
+    grupo_items.empty()
+    moneda = Item(900, 70, 0, coin_images)
+    papa = Item(380, 400, 1, [potatoe])
+    grupo_items.add(moneda, papa)
+
+    world_data = []
+    with open("Assets//nivel//mapa_peru.csv", newline="") as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for fila in reader:
+            filas = [int(columna) for columna in fila]
+            world_data.append(filas)
+    world = Mundo()
+    world.process_data(world_data, tile_list)
+
+
+
 pygame.init()
 
 ventana = pygame.display.set_mode((constantes.ANCHO_VENTANA,constantes.ALTO_VENTANA))
@@ -44,7 +75,36 @@ posicion_pantalla = [0,0]
 font = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",10)
 font_game_over = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",24)
 
+
 game_over_text = font_game_over.render('Juego Terminado', True, constantes.BLANCO)
+
+
+font_reinicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
+font_inicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
+font_titulo = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
+
+game_over_text = font_game_over.render('Juego Terminado', True, constantes.BLANCO)
+
+text_boton_reinicio = font_reinicio.render("Reinciar",True,constantes.NEGRO)
+
+#Botones de inicio
+boton_jugar = pygame.Rect(constantes.ANCHO_VENTANA /2 -100, constantes.ALTO_VENTANA / 2 - 50, 200, 50)
+boton_salir = pygame.Rect(constantes.ANCHO_VENTANA /2 -100, constantes.ALTO_VENTANA / 2 + 50, 200, 50)
+texto_boton_jugar = font_inicio.render("Jugar",True,constantes.NEGRO)
+texto_boton_salir = font_inicio.render("Salir",True,constantes.BLANCO)
+
+#Pantalla de inicio
+def pantalla_inicio():
+    ventana.fill(constantes.MORADO)
+    dibujar_texto("Rescate de Capibaras", font_titulo, constantes.BLANCO,
+                  constantes.ANCHO_VENTANA / 2 -200,
+                  constantes.ALTO_VENTANA / 2 - 200)
+    pygame.draw.rect(ventana,constantes.AMARILLO,boton_jugar)
+    pygame.draw.rect(ventana, constantes.ROJO, boton_salir)
+    ventana.blit(texto_boton_jugar, (boton_jugar.x +50, boton_jugar.y +10))
+    ventana.blit(texto_boton_salir, (boton_jugar.x + 50, boton_jugar.y + 110))
+    pygame.display.update()
+
 
 #Importar imagenes
 #Energia
@@ -104,7 +164,8 @@ num_coin_images = contar_elementos(ruta_img)
 print(f"numero de imagenes de monedas: {num_coin_images}")
 for i in range(num_coin_images):
     img = pygame.image.load(f"Assets//Images//items//coin//coin_{i}.png")
-    img = escalar_img(img,1)
+    img = escalar_img(img,2)
+
     coin_images.append(img)
 
 def dibujar_texto (texto,fuente,color,x,y):
@@ -148,7 +209,9 @@ def dibujar_grid():
 jugador = Personaje(100,80,animaciones,70,1)
 
 #crear un enemigo de la clase personaje
-cazador = Personaje(400,300,animaciones_enemigos[0],100,2)#si se quieres otro enemigo seria animaciones_enemigos[0]
+
+cazador = Personaje(400,500,animaciones_enemigos[0],100,2)#si se quieres otro enemigo seria animaciones_enemigos[0]
+
 cazador1 = Personaje(100,200,animaciones_enemigos[0],100,2)
 
 #crear lista de enemigos
@@ -164,8 +227,10 @@ grupo_damage_text = pygame.sprite.Group()
 grupo_balas = pygame.sprite.Group()
 grupo_items = pygame.sprite.Group()
 
-moneda = Item(350,25,0,coin_images)
-papa = Item(380,55,1,[potatoe])
+
+moneda = Item(900,70,0,coin_images)
+papa = Item(380,400,1,[potatoe])
+
 
 grupo_items.add(moneda)
 grupo_items.add(papa)
@@ -181,119 +246,154 @@ mover_derecha = False
 reloj = pygame.time.Clock()
 
 
+mostrar_inicio = True
+
 run = True
 
 while run == True:
 
-    #QUE VAYA A 60 FPS
-    reloj.tick(constantes.FPS)
-    ventana.fill(constantes.COLOR_BG)
-    #dibujar_grid()
 
-    if jugador.vivo == True:
-        #Calcular el movimiento del jugador
-        delta_x = 0
-        delta_y = 0
+    if mostrar_inicio:
+        pantalla_inicio()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if boton_jugar.collidepoint(event.pos):
+                    mostrar_inicio = False
+                if boton_salir.collidepoint(event.pos):
+                    run = False
+    else:
 
-        if mover_derecha == True:
-            delta_x = constantes.VELOCIDAD
-        if mover_izquierda == True:
-            delta_x = -constantes.VELOCIDAD
-        if mover_arriba == True:
-            delta_y = -constantes.VELOCIDAD
-        if mover_abajo == True:
-            delta_y = constantes.VELOCIDAD
+        #QUE VAYA A 60 FPS
+        reloj.tick(constantes.FPS)
+        ventana.fill(constantes.COLOR_BG)
+        #dibujar_grid()
 
-        #mover al jugador
-        posicion_pantalla = jugador.movimiento(delta_x,delta_y, world.obstaculos_tiles)
+        if jugador.vivo == True:
+            #Calcular el movimiento del jugador
+            delta_x = 0
+            delta_y = 0
 
-        #Actualizar mapa
-        world.update(posicion_pantalla)
+            if mover_derecha == True:
+                delta_x = constantes.VELOCIDAD
+            if mover_izquierda == True:
+                delta_x = -constantes.VELOCIDAD
+            if mover_arriba == True:
+                delta_y = -constantes.VELOCIDAD
+            if mover_abajo == True:
+                delta_y = constantes.VELOCIDAD
 
-        #Actualizar estado del jugador
-        jugador.update()
-        # Actualizar estado del enemigo
+            #mover al jugador
+            posicion_pantalla = jugador.movimiento(delta_x,delta_y, world.obstaculos_tiles)
+
+            #Actualizar mapa
+            world.update(posicion_pantalla)
+
+            #Actualizar estado del jugador
+            jugador.update()
+            # Actualizar estado del enemigo
+            for ene in lista_enemigos:
+                ene.update()
+
+            #Actualiza el estado del arma
+            bala = pistola.update(jugador)
+            if bala:
+                grupo_balas.add(bala)
+            for bala in grupo_balas:
+                damage,pos_damage = bala.update(lista_enemigos, world.obstaculos_tiles)
+                if damage:
+                    damage_text = DamageText(pos_damage.centerx,pos_damage.centery, str(damage),font,constantes.ROJO)
+                    grupo_damage_text.add(damage_text)
+
+
+            #actualizar daño
+            grupo_damage_text.update(posicion_pantalla)
+
+            #actualizar item
+            grupo_items.update(posicion_pantalla, jugador)
+
+
+        # dibujar mundo
+        world.draw(ventana)
+
+        #dibujar al jugador
+        jugador.dibujar(ventana)
+
+        #dibujar al enemigo
         for ene in lista_enemigos:
-            ene.update()
+            if ene.energia == 0:
+                lista_enemigos.remove(ene)
+            if ene.energia > 0:
+                ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla)
+                ene.dibujar(ventana)
 
-        #Actualiza el estado del arma
-        bala = pistola.update(jugador)
-        if bala:
-            grupo_balas.add(bala)
+        #dibujar el arma
+        pistola.dibujar(ventana)
+
+        #dibujar balas
         for bala in grupo_balas:
-            damage,pos_damage = bala.update(lista_enemigos, world.obstaculos_tiles)
-            if damage:
-                damage_text = DamageText(pos_damage.centerx,pos_damage.centery, str(damage),font,constantes.ROJO)
-                grupo_damage_text.add(damage_text)
+            bala.dibujar(ventana)
+
+        #dibujar las vidas
+        vida_jugador()
+
+        #dibujar textos
+        grupo_damage_text.draw(ventana)
+        dibujar_texto(f"Puntuacion: {jugador.score}",font,(255,255,0),500,5)
+
+        #dibujar items
+        grupo_items.draw(ventana)
+
+        if jugador.vivo == False:
+            ventana.fill(constantes.ROJO_OSCURO)
+            text_rect = game_over_text.get_rect(center=(constantes.ANCHO_VENTANA / 2,
+                                                        constantes.ALTO_VENTANA / 2))
+            ventana.blit(game_over_text, text_rect)
+            # Botón de reinicio
+            boton_reinicio = pygame.Rect(constantes.ANCHO_VENTANA / 2 - 100, constantes.ALTO_VENTANA / 2 + 50, 200, 50)
+            pygame.draw.rect(ventana, constantes.AMARILLO, boton_reinicio)
+            ventana.blit(text_boton_reinicio, (boton_reinicio.x + 50, boton_reinicio.y + 10))
+
+            # Detección del clic en el botón de reinicio (dentro del bucle de eventos)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if boton_reinicio.collidepoint(event.pos):
+                        reiniciar_juego()
 
 
-        #actualizar daño
-        grupo_damage_text.update(posicion_pantalla)
 
-        #actualizar item
-        grupo_items.update(posicion_pantalla, jugador)
 
-    # dibujar mundo
-    world.draw(ventana)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
 
-    #dibujar al jugador
-    jugador.dibujar(ventana)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    mover_izquierda = True
+                if event.key == pygame.K_d:
+                    mover_derecha = True
+                if event.key == pygame.K_w:
+                    mover_arriba = True
+                if event.key == pygame.K_s:
+                    mover_abajo = True
 
-    #dibujar al enemigo
-    for ene in lista_enemigos:
-        if ene.energia == 0:
-            lista_enemigos.remove(ene)
-        if ene.energia > 0:
-            ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla)
-            ene.dibujar(ventana)
+            #Para cuando se suelta la tecla
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    mover_izquierda = False
+                if event.key == pygame.K_d:
+                    mover_derecha = False
+                if event.key == pygame.K_w:
+                    mover_arriba = False
+                if event.key == pygame.K_s:
+                    mover_abajo = False
 
-    #dibujar el arma
-    pistola.dibujar(ventana)
 
-    #dibujar balas
-    for bala in grupo_balas:
-        bala.dibujar(ventana)
 
-    #dibujar las vidas
-    vida_jugador()
+        pygame.display.update()
 
-    #dibujar textos
-    grupo_damage_text.draw(ventana)
-    dibujar_texto(f"Puntuacion: {jugador.score}",font,(255,255,0),500,5)
-
-    #dibujar items
-    grupo_items.draw(ventana)
-
-    if jugador.vivo == False:
-        ventana.fill(constantes.ROJO_OSCURO)
-        text_rect = game_over_text.get_rect(center=(constantes.ANCHO_VENTANA / 2,
-                                                    constantes.ALTO_VENTANA / 2))
-        ventana.blit(game_over_text, text_rect)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
-                mover_izquierda = True
-            if event.key == pygame.K_d:
-                mover_derecha = True
-            if event.key == pygame.K_w:
-                mover_arriba = True
-            if event.key == pygame.K_s:
-                mover_abajo = True
-
-        #Para cuando se suelta la tecla
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-                mover_izquierda = False
-            if event.key == pygame.K_d:
-                mover_derecha = False
-            if event.key == pygame.K_w:
-                mover_arriba = False
-            if event.key == pygame.K_s:
-                mover_abajo = False
-    pygame.display.update()
 
 pygame.quit()
