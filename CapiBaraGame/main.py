@@ -101,42 +101,15 @@ pygame.display.set_caption("Nombre del juego")
 #variables
 posicion_pantalla = [0,0]
 
-
 #fuentes
 font = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",10)
 font_game_over = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",24)
 
-
 game_over_text = font_game_over.render('Juego Terminado', True, constantes.BLANCO)
-
 
 font_reinicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
 font_inicio = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
 font_titulo = pygame.font.Font("Assets//fonts//QuinqueFive.ttf",12)
-
-game_win_text = font_game_over.render(
-    """Rescate de Capibaras
-Un juego creado por...
-Desarrollador Principal: Tu Nombre
-Artista: Nombre del Artista
-Músico: Nombre del Compositor
-
-Este juego tiene como propósito
-concienciar sobre la importancia
-de proteger a los animales y su
-hábitat natural. La capibara es
-una especie que enfrenta amenazas
-debido a la deforestación y la caza
-ilegal. Cada pequeño esfuerzo cuenta
-para preservar a estos animales
-increíbles.
-
-Gracias a todos los que apoyaron el proyecto
-¡Esperamos que te haya gustado!
-Gracias por jugar y recuerda:
-¡Juntos podemos hacer la diferencia!""",
-    True, constantes.BLANCO
-)
 
 text_boton_reinicio = font_reinicio.render("Reinciar",True,constantes.NEGRO)
 
