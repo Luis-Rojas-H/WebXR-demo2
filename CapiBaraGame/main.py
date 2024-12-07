@@ -259,7 +259,7 @@ def dibujar_grid():
         pygame.draw.line(ventana, constantes.BLANCO, (0, x*constantes.TILE_SIZE), (constantes.ANCHO_VENTANA, x*constantes.TILE_SIZE))
 
 #crar un jufador de la clase personaje
-jugador = Personaje(100,80,animaciones,70,1)
+jugador = Personaje(100,80,animaciones,100,1)
 
 #crear un enemigo de la clase personaje
 
