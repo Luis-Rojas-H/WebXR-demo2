@@ -38,6 +38,11 @@ def mostrar_mensaje(texto, ventana, font, pos_x, pos_y):
 def nombres_carpetas(directorio):
     return os.listdir(directorio)
 
+#funcion para mostrar coordenadas
+def mostrar_coordenadas(ventana, font, pos_x, pos_y):
+    texto = f"Coordenadas: ({pos_x}, {pos_y})"
+    coordenadas = font.render(texto, True, constantes.BLANCO)  # Asegúrate de que BLANCO esté definido
+    ventana.blit(coordenadas, (pos_x - coordenadas.get_width() / 2, pos_y))  # Centra el texto debajo del jugador
 
 
 #funcion para reiniciar el juego
@@ -50,14 +55,31 @@ def reiniciar_juego():
     jugador.forma.topleft = (100, 80)
 
     lista_enemigos.clear()
-    cazador = Personaje(400, 500, animaciones_enemigos[0], 100, 2)
-    cazador1 = Personaje(100, 200, animaciones_enemigos[0], 100, 2)
-    lista_enemigos.extend([cazador, cazador1])
+    cazador = Personaje(400, 500, animaciones_enemigos[0], 100, 2)  # si se quieres otro enemigo seria animaciones_enemigos[0]
+    cazador1 = Personaje(810, 200, animaciones_enemigos[0], 100, 2)
+    cazador2 = Personaje(800, 800, animaciones_enemigos[0], 100, 2)
+    cazador3 = Personaje(1140, 535, animaciones_enemigos[0], 100, 2)  #
+    cazador4 = Personaje(870, 1400, animaciones_enemigos[0], 100, 2)  #
+    cazador5 = Personaje(1350, 1100, animaciones_enemigos[0], 100, 2)  #
+    cazador6 = Personaje(1700, 244, animaciones_enemigos[0], 100, 2)  #
+    cazador7 = Personaje(2400, 244, animaciones_enemigos[0], 100, 2)  #
+    cazador8 = Personaje(2050, 560, animaciones_enemigos[0], 100, 2)  #
+    cazador9 = Personaje(2128, 1550, animaciones_enemigos[0], 100, 2)  #
+    cazador10 = Personaje(1650, 1550, animaciones_enemigos[0], 100, 2)  #
+    cazador11 = Personaje(2200, 1000, animaciones_enemigos[0], 100, 2)  #
+    lista_enemigos.extend([cazador, cazador1,cazador2,cazador3,cazador4,cazador5,cazador6,cazador7,cazador8,cazador9,cazador10,cazador11])
 
     grupo_items.empty()
-    moneda = Item(900, 70, 0, coin_images)
+    moneda = Item(650, 90, 0, coin_images)
+    moneda_1 = Item(1850, 1100, 0, coin_images)
+    moneda_2 = Item(1940, 90, 0, coin_images)
+    moneda_3 = Item(2200, 90, 0, coin_images)
+
     papa = Item(380, 400, 1, [potatoe])
-    grupo_items.add(moneda, papa)
+    papa_1 = Item(1000, 1300, 1, [potatoe])
+    papa_2 = Item(2055, 500, 1, [potatoe])
+    papa_3 = Item(2500, 1600, 1, [potatoe])
+    grupo_items.add(moneda,moneda_1,moneda_2,moneda_3, papa,papa_1,papa_2,papa_3)
 
     world_data = []
     with open("Assets//nivel//mapa_peru.csv", newline="") as csvfile:
@@ -221,12 +243,33 @@ jugador = Personaje(100,80,animaciones,70,1)
 
 cazador = Personaje(400,500,animaciones_enemigos[0],100,2)#si se quieres otro enemigo seria animaciones_enemigos[0]
 
-cazador1 = Personaje(100,200,animaciones_enemigos[0],100,2)
+cazador1 = Personaje(810,200,animaciones_enemigos[0],100,2)
+cazador2 = Personaje(800,800,animaciones_enemigos[0],100,2)
+cazador3 = Personaje(1140,535,animaciones_enemigos[0],100,2)#
+cazador4 = Personaje(870,1400,animaciones_enemigos[0],100,2)#
+cazador5 = Personaje(1350,1100,animaciones_enemigos[0],100,2)#
+cazador6 = Personaje(1700,244,animaciones_enemigos[0],100,2)#
+cazador7 = Personaje(2400,244,animaciones_enemigos[0],100,2)#
+cazador8 = Personaje(2050,560,animaciones_enemigos[0],100,2)#
+cazador9 = Personaje(2128,1550,animaciones_enemigos[0],100,2)#
+cazador10 = Personaje(1650,1550,animaciones_enemigos[0],100,2)#
+cazador11 = Personaje(2200,1000,animaciones_enemigos[0],100,2)#
 
 #crear lista de enemigos
 lista_enemigos = []
 lista_enemigos.append(cazador)
 lista_enemigos.append(cazador1)
+lista_enemigos.append(cazador2)
+lista_enemigos.append(cazador3)
+lista_enemigos.append(cazador4)
+lista_enemigos.append(cazador5)
+lista_enemigos.append(cazador6)
+lista_enemigos.append(cazador7)
+lista_enemigos.append(cazador8)
+lista_enemigos.append(cazador9)
+lista_enemigos.append(cazador10)
+lista_enemigos.append(cazador11)
+
 
 #crear un arma de la clase weapon
 pistola = Weapon(imagen_pistola,imagen_balas)
@@ -237,12 +280,24 @@ grupo_balas = pygame.sprite.Group()
 grupo_items = pygame.sprite.Group()
 
 
-moneda = Item(900,70,0,coin_images)
-papa = Item(380,400,1,[potatoe])
+moneda = Item(650,90,0,coin_images)
+moneda_1 = Item(1850,1100,0,coin_images)
+moneda_2 = Item(1940,90,0,coin_images)
+moneda_3 = Item(2200,90,0,coin_images)
 
+papa = Item(380,400,1,[potatoe])
+papa_1 = Item(1000,1300,1,[potatoe])
+papa_2 = Item(2055,500,1,[potatoe])
+papa_3 = Item(2500,1600,1,[potatoe])
 
 grupo_items.add(moneda)
+grupo_items.add(moneda_1)
+grupo_items.add(moneda_2)
+grupo_items.add(moneda_3)
 grupo_items.add(papa)
+grupo_items.add(papa_1)
+grupo_items.add(papa_2)
+grupo_items.add(papa_3)
 
 #definir las variables de movimiento del jugador
 mover_arriba = False
@@ -295,6 +350,9 @@ while run == True:
 
             #mover al jugador
             posicion_pantalla = jugador.movimiento(delta_x,delta_y, world.obstaculos_tiles)
+
+
+
 
             #Actualizar mapa
             world.update(posicion_pantalla)
