@@ -7,10 +7,12 @@ from items import Item
 from mundo import Mundo
 import os
 import csv
+import math
 
 
 #funciones:
 #escalar imagen
+
 
 def escalar_img(image, scale):
     w = image.get_width()
@@ -22,7 +24,14 @@ def escalar_img(image, scale):
 def contar_elementos(directorio):
     return len(os.listdir(directorio))
 
+#funcion distancia
+def distancia(p1, p2):
+    return math.sqrt((p1.forma.centerx - p2.forma.centerx) ** 2 + (p1.forma.centery - p2.forma.centery) ** 2)
 
+def mostrar_mensaje(texto, ventana, font, pos_x, pos_y):
+    mensaje = font.render(texto, True, constantes.BLANCO)
+    # Dibuja el mensaje un poco por encima de la cabeza del personaje
+    ventana.blit(mensaje, (pos_x - mensaje.get_width() / 2, pos_y - mensaje.get_height() - 10))
 
 
 #funcion listar nombres elementos
@@ -325,8 +334,14 @@ while run == True:
             if ene.energia == 0:
                 lista_enemigos.remove(ene)
             if ene.energia > 0:
-                ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla)
+                ene.enemigos(jugador, world.obstaculos_tiles, posicion_pantalla, ventana, font)
                 ene.dibujar(ventana)
+
+                # Verificar la distancia entre el jugador y el enemigo
+                if distancia(jugador, ene) < 100:  # Ajusta el valor según sea necesario
+                    pos_x = jugador.forma.centerx
+                    pos_y = jugador.forma.centery
+                    mostrar_mensaje("Te matare y rescatare al capibara", ventana, font, pos_x, pos_y)
 
         #dibujar el arma
         pistola.dibujar(ventana)

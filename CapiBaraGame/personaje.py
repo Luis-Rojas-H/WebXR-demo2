@@ -77,7 +77,14 @@ class Personaje():
 
             return posicion_pantalla
 
-    def enemigos(self, jugador, obstaculos_title, posicion_pantalla):
+
+
+    def mostrar_mensaje(self, ventana, font):
+        mensaje = "Quemare el bosque amozonico"
+        texto = font.render(mensaje, True, (255, 0, 0))  # Color rojo
+        ventana.blit(texto, (self.forma.x, self.forma.y - 20))  # Muestra el mensaje encima del enemigo
+
+    def enemigos(self, jugador, obstaculos_title, posicion_pantalla,ventana,font):
         clipped_line = ()
         ene_dx = 0
         ene_dy = 0
@@ -96,6 +103,9 @@ class Personaje():
                               (self.forma.centery - jugador.forma.centery)**2)
 
         if not clipped_line and distancia < constantes.RANGO:
+            # Aquí puedes mostrar el mensaje si el jugador está cerca
+            if distancia < 100:  # Ajusta este valor según la distancia que desees
+                self.mostrar_mensaje(ventana, font)  # Muestra el mensaje del enemigo
             if self.forma.centerx > jugador.forma.centerx:
                 ene_dx = -constantes.VELOCIDAD_ENEMIGO
             if self.forma.centerx < jugador.forma.centerx:
